@@ -26,7 +26,7 @@ COPY files/sources.list.txt /etc/apt/sources.list
 RUN apt-get update &&  apt-get -y install wget curl zip unzip git
 RUN wget -O $MAVEN_ZIP_LOCAL $MAVEN_BINARY_URL && unzip $MAVEN_ZIP_LOCAL -d /opt/payara/
 RUN ln -s /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
-RUN chown -R 1001 /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
+RUN chown -R 1000 /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
 
 
 # TODO (optional): Copy the builder files into /opt/app-root
@@ -40,7 +40,7 @@ COPY ./s2i/bin/ /usr/libexec/s2i
 # RUN chown -R 1001:1001 /opt/app-root
 
 # This default user is created in the openshift/base-centos7 image
-USER 1001
+USER 1000
 RUN echo $JAVA_HOME && echo $MAVEN_HOME && echo $PATH
 RUN mvn -version
 # TODO: Set the default port for applications built using this image
