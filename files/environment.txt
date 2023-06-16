@@ -1,0 +1,2 @@
+MAVEN_HOME=/opt/payara/maven388
+PATH="$PATH:$MAVEN_HOME/bin"

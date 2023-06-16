@@ -6,6 +6,10 @@ LABEL maintainer="Julian Rivera-Pineda <julian.rivera@promerica.com.sv>"
 
 # TODO: Rename the builder environment variable to inform users about application you provide them
 ENV BUILDER_VERSION 1.0
+ENV MAVEN_BINARY_URL https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.zip
+ENV MAVEN_ZIP_LOCAL /opt/payara/apache-maven-3.8.8-bin.zip
+ENV MAVEN_HOME /opt/payara/maven388
+ENV PATH "${PATH}:${MAVEN_HOME}/bin"
 
 # TODO: Set labels used in OpenShift to describe the builder image
 LABEL io.k8s.description="Platform for building Jakarta EE Applications using Payara5 Server Full jdk17" \
@@ -19,7 +23,10 @@ LABEL io.k8s.description="Platform for building Jakarta EE Applications using Pa
 #RUN gem install asdf
 USER root
 COPY files/sources.list.txt /etc/apt/sources.list
-RUN apt-get update &&  apt-get -y install wget
+RUN apt-get update &&  apt-get -y install wget curl zip unzip git
+RUN wget -O $MAVEN_ZIP_LOCAL $MAVEN_BINARY_URL && unzip $MAVEN_ZIP_LOCAL -d /opt/payara/
+RUN ln -s /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
+RUN chown -R 1001 /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
 
 
 # TODO (optional): Copy the builder files into /opt/app-root
@@ -34,7 +41,8 @@ COPY ./s2i/bin/ /usr/libexec/s2i
 
 # This default user is created in the openshift/base-centos7 image
 USER 1001
-
+RUN echo $JAVA_HOME && echo $MAVEN_HOME && echo $PATH
+RUN mvn -version
 # TODO: Set the default port for applications built using this image
 # EXPOSE 8080
 
