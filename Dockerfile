@@ -10,6 +10,7 @@ ENV MAVEN_BINARY_URL https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apach
 ENV MAVEN_ZIP_LOCAL /opt/payara/apache-maven-3.8.8-bin.zip
 ENV MAVEN_HOME /opt/payara/maven388
 ENV PATH "${PATH}:${MAVEN_HOME}/bin"
+ENV APP_SOURCE "/opt/payara/src"
 
 # TODO: Set labels used in OpenShift to describe the builder image
 LABEL io.k8s.description="Platform for building Jakarta EE Applications using Payara5 Server Full jdk17" \
@@ -27,7 +28,8 @@ RUN apt-get update &&  apt-get -y install wget curl zip unzip git
 RUN wget -O $MAVEN_ZIP_LOCAL $MAVEN_BINARY_URL && unzip $MAVEN_ZIP_LOCAL -d /opt/payara/
 RUN ln -s /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
 RUN chown -R 1000 /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
-
+RUN rm $MAVEN_ZIP_LOCAL
+RUN mkdir -p $APP_SOURCE && chown -R 1000 $APP_SOURCE
 
 # TODO (optional): Copy the builder files into /opt/app-root
 # COPY ./<builder_folder>/ /opt/app-root/
