@@ -6,10 +6,11 @@ LABEL maintainer="Julian Rivera-Pineda <julian.rivera@promerica.com.sv>"
 
 # TODO: Rename the builder environment variable to inform users about application you provide them
 ENV BUILDER_VERSION 1.0
-ENV MAVEN_BINARY_URL https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.zip
-ENV MAVEN_ZIP_LOCAL /opt/payara/apache-maven-3.8.8-bin.zip
-ENV MAVEN_HOME /opt/payara/maven388
-ENV PATH "${PATH}:${MAVEN_HOME}/bin"
+ENV MAVEN_BINARY_URL https://dlcdn.apache.org/maven/maven-3/3.9.3/binaries/apache-maven-3.9.3-bin.zip
+ENV MAVEN_ZIP_LOCAL /opt/payara/apache-maven-3.9.3-bin.zip
+ENV MAVEN_HOME /opt/payara/apache-maven-3.9.3
+ENV MAVEN_LINK /opt/payara/maven393
+ENV PATH "${PATH}:${MAVEN_LINK}/bin"
 ENV APP_SOURCE "/opt/payara/src"
 
 # TODO: Set labels used in OpenShift to describe the builder image
@@ -25,9 +26,10 @@ LABEL io.k8s.description="Platform for building Jakarta EE Applications using Pa
 USER root
 COPY files/sources.list.txt /etc/apt/sources.list
 RUN apt-get update &&  apt-get -y install wget curl zip unzip git
+RUN apt -y upgrade
 RUN wget -O $MAVEN_ZIP_LOCAL $MAVEN_BINARY_URL && unzip $MAVEN_ZIP_LOCAL -d /opt/payara/
-RUN ln -s /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
-RUN chown -R 1000 /opt/payara/apache-maven-3.8.8 /opt/payara/maven388
+RUN ln -s ${MAVEN_HOME} ${MAVEN_LINK}
+RUN chown -R 1000 ${MAVEN_HOME} ${MAVEN_LINK}
 RUN rm $MAVEN_ZIP_LOCAL
 RUN mkdir -p $APP_SOURCE && chown -R 1000 $APP_SOURCE
 
